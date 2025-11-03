@@ -268,8 +268,9 @@ class BacktestEvaluator:
         win_rate = len(winning_trades) / num_trades * 100 if num_trades > 0 else 0
         
         # Sharpe ratio (simplified)
+        TRADING_DAYS_PER_YEAR = 252
         returns = pd.Series(portfolio_values).pct_change().dropna()
-        sharpe_ratio = returns.mean() / returns.std() * np.sqrt(252) if returns.std() > 0 else 0
+        sharpe_ratio = returns.mean() / returns.std() * np.sqrt(TRADING_DAYS_PER_YEAR) if returns.std() > 0 else 0
         
         # Maximum drawdown
         cumulative = pd.Series(portfolio_values).cummax()

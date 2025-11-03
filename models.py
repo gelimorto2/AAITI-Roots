@@ -203,12 +203,13 @@ class TransformerModel(BaseModel):
         self.scaler = StandardScaler()
         self._build_model()
     
-    def _transformer_block(self, x, ff_dim, num_heads, dropout):
+    def _transformer_block(self, x, ff_dim, num_heads, dropout, embed_dim):
         """Single transformer block."""
         # Multi-head attention
+        key_dim = embed_dim // num_heads
         attn_output = layers.MultiHeadAttention(
             num_heads=num_heads, 
-            key_dim=x.shape[-1] // num_heads
+            key_dim=key_dim
         )(x, x)
         attn_output = layers.Dropout(dropout)(attn_output)
         x = layers.LayerNormalization(epsilon=1e-6)(x + attn_output)
@@ -216,7 +217,7 @@ class TransformerModel(BaseModel):
         # Feed forward network
         ff_output = layers.Dense(ff_dim, activation='relu')(x)
         ff_output = layers.Dropout(dropout)(ff_output)
-        ff_output = layers.Dense(x.shape[-1])(ff_output)
+        ff_output = layers.Dense(embed_dim)(ff_output)
         ff_output = layers.Dropout(dropout)(ff_output)
         
         return layers.LayerNormalization(epsilon=1e-6)(x + ff_output)
@@ -225,10 +226,11 @@ class TransformerModel(BaseModel):
         """Build Transformer architecture."""
         inputs = layers.Input(shape=self.input_shape)
         x = inputs
+        embed_dim = self.input_shape[-1]
         
         # Add transformer blocks
         for _ in range(self.num_blocks):
-            x = self._transformer_block(x, self.ff_dim, self.num_heads, self.dropout)
+            x = self._transformer_block(x, self.ff_dim, self.num_heads, self.dropout, embed_dim)
         
         # Global pooling
         x = layers.GlobalAveragePooling1D()(x)

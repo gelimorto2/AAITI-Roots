@@ -17,7 +17,7 @@ class Visualizer:
         """Initialize visualizer with plotting style."""
         try:
             plt.style.use(style)
-        except:
+        except Exception:
             plt.style.use('default')
         
         sns.set_palette("husl")

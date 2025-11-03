@@ -8,7 +8,8 @@ import numpy as np
 import pandas as pd
 from datetime import datetime, timedelta
 import warnings
-warnings.filterwarnings('ignore')
+warnings.filterwarnings('ignore', category=FutureWarning)
+warnings.filterwarnings('ignore', category=DeprecationWarning)
 
 from data_fetcher import BTCDataFetcher
 from feature_engineering import FeatureEngineer

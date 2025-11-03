@@ -53,6 +53,9 @@ plots/
 # Jupyter
 .ipynb_checkpoints/
 
+# Test files
+test_*.py
+
 # OS
 .DS_Store
 Thumbs.db

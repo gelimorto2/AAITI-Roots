@@ -175,8 +175,11 @@ class FeatureEngineer:
         self.add_lag_features()
         self.create_target(horizon=target_horizon)
         
-        # Drop NaN values
+        # Replace infinity values with NaN before dropping
         initial_len = len(self.df)
+        self.df.replace([np.inf, -np.inf], np.nan, inplace=True)
+        
+        # Drop NaN values
         self.df.dropna(inplace=True)
         final_len = len(self.df)
         

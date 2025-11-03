@@ -53,6 +53,9 @@ plots/
 # Jupyter
 .ipynb_checkpoints/
 
+# Temporary test files (but keep test_structure.py and test_infinity_fix.py)
+test_temp_*.py
+
 # OS
 .DS_Store
 Thumbs.db

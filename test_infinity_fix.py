@@ -19,16 +19,20 @@ def create_data_with_infinity_edge_cases(n_samples=500):
     - Very small denominators in ratio calculations
     - Identical consecutive prices
     """
-    timestamps = [datetime.now() - timedelta(hours=n_samples-i) for i in range(n_samples)]
+    # Use fixed datetime for reproducible tests
+    base_time = datetime(2024, 1, 1)
+    timestamps = [base_time + timedelta(hours=i) for i in range(n_samples)]
     
     # Generate mostly normal data
     prices = 50000 + np.random.randn(n_samples) * 500
     volumes = np.random.uniform(100, 1000, n_samples) * 1e6
     
-    # Add edge cases that would cause infinity
-    volumes[50] = 0  # Zero volume -> volume.pct_change() creates inf
-    volumes[100] = 0
-    prices[100] = prices[99]  # Identical prices
+    # Add edge cases that would cause infinity (using relative indices)
+    idx1 = int(n_samples * 0.1)  # ~10% through the data
+    idx2 = int(n_samples * 0.2)  # ~20% through the data
+    volumes[idx1] = 0  # Zero volume -> volume.pct_change() creates inf
+    volumes[idx2] = 0
+    prices[idx2] = prices[idx2-1]  # Identical prices
     
     df = pd.DataFrame({
         'open': prices * (1 + np.random.randn(n_samples) * 0.001),
